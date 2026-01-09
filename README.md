@@ -107,12 +107,12 @@ b1 + W1 \* input
 
 Then we apply **ReLU activation**.
 
-`   for (int i = 0; i < HIDDEN; i++)
+``   for (int i = 0; i < HIDDEN; i++)
     {
         b1[i] = randf();
         for (int j = 0; j < INPUT; j++)
             W1[i][j] = randf();
-    }  `
+    }  ``
 
 ReLU activation function:
 
@@ -124,12 +124,12 @@ The hidden layer output is reused to compute the output layer values:
 
 b2 + W2 \* hidden
 
-`   for (int i = 0; i < OUTPUT; i++)
+``   for (int i = 0; i < OUTPUT; i++)
     {
         b2[i] = 0;
         for (int j = 0; j < HIDDEN; j++)
             W2[i][j] = randf();
-    }   `
+    }   ``
 
 At this point, z contains **raw scores (logits)**.
 
@@ -138,7 +138,7 @@ Softmax
 
 Softmax converts logits into probabilities.
 
-` void softmax(float *z)
+`` void softmax(float *z)
 {
     float max = z[0];
     for (int i = 1; i < OUTPUT; i++)
@@ -152,7 +152,8 @@ Softmax converts logits into probabilities.
     }
     for (int i = 0; i < OUTPUT; i++)
         z[i] /= sum;
-}  `
+}  
+``
 
 After softmax:
 
@@ -250,4 +251,5 @@ Notes
 *   This is not production-ready
     
 *   This project is for educational purposes only
+
 
