@@ -65,11 +65,11 @@ Each sample is a flattened **4 × 3 matrix**.
 
 Example input labeled as UP:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   1 1 1 1  0 0 0 0  0 0 0 0   `
+`   1 1 1 1  0 0 0 0  0 0 0 0   `
 
 Flattened representation:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}   `
+`   {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}   `
 
 Weights and Biases
 ------------------
@@ -94,7 +94,7 @@ This is important because:
 
 Random initialization function:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   float randf()  {      return ((float)rand() / RAND_MAX) * 0.2f - 0.1f;  }   `
+`   float randf()  {   return ((float)rand() / RAND_MAX) * 0.2f - 0.1f;  }   `
 
 Forward Pass
 ------------
@@ -107,11 +107,16 @@ b1 + W1 \* input
 
 Then we apply **ReLU activation**.
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   for (int i = 0; i < HIDDEN; i++)  {      float sum = b1[i];      for (int j = 0; j < INPUT; j++)          sum += W1[i][j] * train_x[n][j];      h[i] = relu(sum);  }   `
+`   for (int i = 0; i < HIDDEN; i++)
+    {
+        b1[i] = randf();
+        for (int j = 0; j < INPUT; j++)
+            W1[i][j] = randf();
+    }  `
 
 ReLU activation function:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   float relu(float x)  {      return x > 0 ? x : 0;  }   `
+`   float relu(float x)  {  return x > 0 ? x : 0;  }   `
 
 ### Hidden → Output Layer
 
@@ -119,7 +124,12 @@ The hidden layer output is reused to compute the output layer values:
 
 b2 + W2 \* hidden
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   for (int i = 0; i < OUTPUT; i++)  {      float sum = b2[i];      for (int j = 0; j < HIDDEN; j++)          sum += W2[i][j] * h[j];      z[i] = sum;  }   `
+`   for (int i = 0; i < OUTPUT; i++)
+    {
+        b2[i] = 0;
+        for (int j = 0; j < HIDDEN; j++)
+            W2[i][j] = randf();
+    }   `
 
 At this point, z contains **raw scores (logits)**.
 
@@ -128,7 +138,21 @@ Softmax
 
 Softmax converts logits into probabilities.
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   void softmax(float *z)  {      float max = z[0];      for (int i = 1; i < OUTPUT; i++)          if (z[i] > max)              max = z[i];      float sum = 0;      for (int i = 0; i < OUTPUT; i++)      {          z[i] = expf(z[i] - max);          sum += z[i];      }      for (int i = 0; i < OUTPUT; i++)          z[i] /= sum;  }   `
+` void softmax(float *z)
+{
+    float max = z[0];
+    for (int i = 1; i < OUTPUT; i++)
+        if (z[i] > max)
+            max = z[i];
+    float sum = 0;
+    for (int i = 0; i < OUTPUT; i++)
+    {
+        z[i] = expf(z[i] - max);
+        sum += z[i];
+    }
+    for (int i = 0; i < OUTPUT; i++)
+        z[i] /= sum;
+}  `
 
 After softmax:
 
@@ -153,7 +177,7 @@ The model is trained using:
 
 The gradient for the output layer is:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   dz[i] = z[i] - (i == train_y[n]);   `
+`   dz[i] = z[i] - (i == train_y[n]);   `
 
 This measures how wrong the prediction is.
 
@@ -161,19 +185,19 @@ This measures how wrong the prediction is.
 
 Weights and biases are updated to reduce the loss:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   b2[i] -= LR * dz[i];  W2[i][j] -= LR * dz[i] * h[j];   `
+`   b2[i] -= LR * dz[i];  W2[i][j] -= LR * dz[i] * h[j];   `
 
 ### Hidden Layer Gradient
 
 The error is propagated back to the hidden layer.ReLU derivative is applied.
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   dh[j] = h[j] > 0 ? sum : 0;   `
+`   dh[j] = h[j] > 0 ? sum : 0;   `
 
 If the neuron is inactive, its gradient is zero.
 
 ### Update Input → Hidden Layer
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   b1[j] -= LR * dh[j];  W1[j][k] -= LR * dh[j] * train_x[n][k];   `
+`   b1[j] -= LR * dh[j];  W1[j][k] -= LR * dh[j] * train_x[n][k];   `
 
 Training Loop
 -------------
@@ -194,7 +218,7 @@ After training, a new **4 × 3 input matrix** is passed to the network.
 
 The output is a probability distribution:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   UP   : 0.92  MID  : 0.06  DOWN : 0.02   `
+`   UP   : 0.92  MID  : 0.06  DOWN : 0.02   `
 
 The class with the highest value is the final prediction.
 
@@ -215,8 +239,15 @@ Why This Project Exists
 Notes
 -----
 
+* This code is not optimized
+
+* This is not production-ready
+
+* This project is for educational purposes only
+
 *   This code is not optimized
     
 *   This is not production-ready
     
 *   This project is for educational purposes only
+
