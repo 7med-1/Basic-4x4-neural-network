@@ -65,11 +65,13 @@ Each sample is a flattened **4 × 3 matrix**.
 
 Example input labeled as UP:
 
-`   1 1 1 1  0 0 0 0  0 0 0 0   `
+```   1 1 1 1  0 0 0 0  0 0 0 0   ```
 
 Flattened representation:
 
-`   {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}   `
+```
+{1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}
+```
 
 Weights and Biases
 ------------------
@@ -94,7 +96,10 @@ This is important because:
 
 Random initialization function:
 
-`   float randf()  {   return ((float)rand() / RAND_MAX) * 0.2f - 0.1f;  }   `
+```c   
+float randf()  {   return ((float)rand() / RAND_MAX) * 0.2f - 0.1f;  }
+```
+
 
 Forward Pass
 ------------
@@ -107,16 +112,20 @@ b1 + W1 \* input
 
 Then we apply **ReLU activation**.
 
-``   for (int i = 0; i < HIDDEN; i++)
+```c
+   for (int i = 0; i < HIDDEN; i++)
     {
         b1[i] = randf();
         for (int j = 0; j < INPUT; j++)
             W1[i][j] = randf();
-    }  ``
+    }
+```
 
 ReLU activation function:
 
-`   float relu(float x)  {  return x > 0 ? x : 0;  }   `
+```c
+float relu(float x)  {  return x > 0 ? x : 0;  }
+```
 
 ### Hidden → Output Layer
 
@@ -124,12 +133,13 @@ The hidden layer output is reused to compute the output layer values:
 
 b2 + W2 \* hidden
 
-``   for (int i = 0; i < OUTPUT; i++)
+```c  for (int i = 0; i < OUTPUT; i++)
     {
         b2[i] = 0;
         for (int j = 0; j < HIDDEN; j++)
             W2[i][j] = randf();
-    }   ``
+    }
+```
 
 At this point, z contains **raw scores (logits)**.
 
@@ -138,7 +148,7 @@ Softmax
 
 Softmax converts logits into probabilities.
 
-`` void softmax(float *z)
+```c void softmax(float *z)
 {
     float max = z[0];
     for (int i = 1; i < OUTPUT; i++)
@@ -153,7 +163,7 @@ Softmax converts logits into probabilities.
     for (int i = 0; i < OUTPUT; i++)
         z[i] /= sum;
 }  
-``
+```
 
 After softmax:
 
@@ -178,7 +188,9 @@ The model is trained using:
 
 The gradient for the output layer is:
 
-`   dz[i] = z[i] - (i == train_y[n]);   `
+```c
+dz[i] = z[i] - (i == train_y[n]);
+```
 
 This measures how wrong the prediction is.
 
@@ -186,19 +198,25 @@ This measures how wrong the prediction is.
 
 Weights and biases are updated to reduce the loss:
 
-`   b2[i] -= LR * dz[i];  W2[i][j] -= LR * dz[i] * h[j];   `
+```c
+ b2[i] -= LR * dz[i];  W2[i][j] -= LR * dz[i] * h[j];   
+```
 
 ### Hidden Layer Gradient
 
 The error is propagated back to the hidden layer.ReLU derivative is applied.
 
-`   dh[j] = h[j] > 0 ? sum : 0;   `
+```c  
+dh[j] = h[j] > 0 ? sum : 0;
+```
 
 If the neuron is inactive, its gradient is zero.
 
 ### Update Input → Hidden Layer
 
-`   b1[j] -= LR * dh[j];  W1[j][k] -= LR * dh[j] * train_x[n][k];   `
+```c 
+b1[j] -= LR * dh[j];  W1[j][k] -= LR * dh[j] * train_x[n][k];   
+```
 
 Training Loop
 -------------
@@ -219,7 +237,9 @@ After training, a new **4 × 3 input matrix** is passed to the network.
 
 The output is a probability distribution:
 
-`   UP   : 0.92  MID  : 0.06  DOWN : 0.02   `
+```c
+UP   : 0.92  MID  : 0.06  DOWN : 0.02   
+```
 
 The class with the highest value is the final prediction.
 
@@ -246,10 +266,5 @@ Notes
 
 * This project is for educational purposes only
 
-*   This code is not optimized
-    
-*   This is not production-ready
-    
-*   This project is for educational purposes only
 
 
